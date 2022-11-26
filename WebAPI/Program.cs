@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using WebAPI.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,14 @@ builder.Services.AddScoped<ITokenHolper, JwtHelper>();
 builder.Services.AddScoped<IUserDal, EfUserDal>();
 builder.Services.AddScoped<ICategoryDal, EfCategoryDal>();
 builder.Services.AddScoped<INewsDal, EfNewsDal>();
+builder.Services.AddLogging(i =>
+{
+    i.ClearProviders();
+    i.SetMinimumLevel(LogLevel.Information);
+    i.AddConsole();
+    i.AddDebug();
+    i.AddProvider(new MyCustomLoggerFactory());
+});
 var app = builder.Build();
 
 

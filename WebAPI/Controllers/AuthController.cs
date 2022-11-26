@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Core.Utilities.Results;
 using Entities.Dto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,44 +10,68 @@ namespace WebAPI.Controllers
     public class AuthController : Controller
     {
         private IAuthService _authService;
-        public AuthController(IAuthService authService)
+        private readonly ILogger<AuthController> _logger;
+        public AuthController(IAuthService authService, ILogger<AuthController> logger)
         {
             _authService = authService;
+            _logger = logger;
         }
 
         [HttpPost("login")]
         public ActionResult Login(UserForLoginDto userForLoginDto)
         {
-            var userToLogin = _authService.Login(userForLoginDto);
-            if (!userToLogin.Success)
+            try
             {
-                return BadRequest(userToLogin.Message);
-            }
-            var result = _authService.CreateAccessToken(userToLogin.Data);
-            if (result.Success)
-            {
-                return Ok(result.Data);
+                var userToLogin = _authService.Login(userForLoginDto);
+                if (!userToLogin.Success)
+                {
 
+                    return BadRequest(userToLogin.Message);
+
+                }
+                var result = _authService.CreateAccessToken(userToLogin.Data);
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+
+                }
+                return BadRequest(result.Message);
             }
-            return BadRequest(result.Message);
+            catch (Exception ex)
+            {
+
+                _logger.LogError("Login failed for user : {0}{1}", userForLoginDto.Email, ex);
+            }
+            return BadRequest(new { Message = $"Login Failed for user: {userForLoginDto.Email}" });
         }
 
 
         [HttpPost("register")]
         public ActionResult Register(UserForRegisterDto userForRegisterDto)
         {
-            var userExists = _authService.UserExists(userForRegisterDto.Email);
-            if (!userExists.Success)
+            try
             {
-                return BadRequest(userExists.Message);
+                var userExists = _authService.UserExists(userForRegisterDto.Email);
+                throw new Exception("asd");
+                if (!userExists.Success)
+                {
+                   
+                    return BadRequest(userExists.Message);
+                }
+                var registerResult = _authService.Register(userForRegisterDto, userForRegisterDto.Password);
+                var result = _authService.CreateAccessToken(registerResult.Data);
+                if (result.Success)
+                {
+                    return Ok(result.Data);
+                }
+                return BadRequest(result.Message);
             }
-            var registerResult = _authService.Register(userForRegisterDto, userForRegisterDto.Password);
-            var result = _authService.CreateAccessToken(registerResult.Data);
-            if (result.Success)
+            catch (Exception ex)
             {
-                return Ok(result.Data);
+                _logger.LogError("Register failed for user : {0}{1}", userForRegisterDto.Email, ex);
+                
             }
-            return BadRequest(result.Message);
+            return BadRequest(new { Message = $"Register Failed for user: {userForRegisterDto.Email}" });
         }
     }
 }

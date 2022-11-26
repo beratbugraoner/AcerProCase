@@ -11,8 +11,6 @@ namespace Entities.Concrete
 {
     public class News : IEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
         public int Id { get; set; }
         public string? Title { get; set; } = "defaultTitle";
