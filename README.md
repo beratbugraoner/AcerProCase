@@ -10,7 +10,7 @@
 
 ## Kısa Özet
 
-Proje'de jwt ile token bazlı authentication islemleri gerceklestirilmistir. Katmanlı mimari,solid prensipleri,DI vs gibi 
+Proje'de jwt ile token bazlı authentication islemleri gerceklestirilmistir. Loglama için ILogger Kullanılmıştır.Katmanlı mimari,solid prensipleri,DI vs gibi 
 prensiplere uygun bir kod yazılmıştır. Projeyi vize haftamdan dolayı yetiştirmek için normalden daha acele bir şekilde yazma 
 zorunluluğum doğmuştur. Bu bir mazaret değildir,projeyi gerçekleştirebildiğim kadar test edip buglarını minimalize etmeye çalıştım.
 Eğer kullanıcı gözümden  kaçan buglar ile karşılaştıysa yukarıdaki iletişim bilgilerinden iletişime geçildiği takdirde çok kısa bir sürede
